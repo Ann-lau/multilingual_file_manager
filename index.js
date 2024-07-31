@@ -31,6 +31,16 @@ app.post('/upload',upload.single('file'),(req,res) =>{
   res.redirect('/')
 })
 
+app.get('/delete', (req,res) => {
+  const fileName = req.query.file
+
+  if(fileName){
+    fs.unlinkSync('public/${fileName}')
+  }
+
+  res.redirect('/')
+})
+
 
 app.listen(PORT,() => {
   console.log("App is listening on port 5000")

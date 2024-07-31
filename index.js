@@ -1,15 +1,34 @@
 const express = require('express')
+const multer = require('multer')
+const path = require('path')
+const fs = require('fs')
 const app = express()
 
 const PORT = 5000
 
 app.set('view engine', 'ejs')
 
+const storage = multer.diskStorage({
+  destination:(req, file, cb) => {
+    cb(null, 'public')
+  },
+  filename:(req, file, cb) => {
+    cb(null,Date.now() + path.extname(file.originalname))
+  }
+})
+
+const upload = multer({storage})
+
 app.use(express.static('public'))
 app.use(express.urlencoded({extended:true}))
 
 app.get('/',(req,res) => {
-  res.render('index')
+  const files = fs.readdirSync("public")
+  res.render('index',{files})
+})
+
+app.post('/upload',upload.single('file'),(req,res) =>{
+  res.redirect('/')
 })
 
 
